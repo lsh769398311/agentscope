@@ -1,5 +1,5 @@
 import { client } from './client';
-import type { AddSkillRequest, MCPClient, MCPClientStatus, Skill } from './types';
+import type { AddSkillRequest, MCPClient, MCPClientStatus, Skill, ToolInfo } from './types';
 
 export const workspaceApi = {
 	mcp: {
@@ -31,6 +31,14 @@ export const workspaceApi = {
 
 		remove: (skillName: string, agentId: string, sessionId: string) =>
 			client.delete(`/workspace/skill/${skillName}`, {
+				agent_id: agentId,
+				session_id: sessionId,
+			}),
+	},
+
+	tools: {
+		list: (agentId: string, sessionId: string) =>
+			client.get<ToolInfo[]>('/workspace/tools', {
 				agent_id: agentId,
 				session_id: sessionId,
 			}),

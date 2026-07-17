@@ -544,6 +544,13 @@
 			"emptyTitle": "No MCP servers",
 			"emptyDescription": "Add an MCP server to equip the workspace with tools."
 		},
+		"tools": {
+			"title": "Tools",
+			"description": "Builtin tools available to the agent in this workspace.",
+			"searchPlaceholder": "Search tools...",
+			"emptyTitle": "No tools",
+			"emptyDescription": "Builtin tools will appear here."
+		},
 		"skill": {
 			"title": "Skills",
 			"description": "The skills equipped in the workspace.",

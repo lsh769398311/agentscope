@@ -1,13 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import { workspaceApi } from '@/api';
-import type { MCPClient, MCPClientStatus, Skill } from '@/api';
+import type { MCPClient, MCPClientStatus, Skill, ToolInfo } from '@/api';
 
 export function useWorkspace(agentId: string | null, sessionId: string | null) {
 	const [mcps, setMcps] = useState<MCPClientStatus[]>([]);
 	const [skills, setSkills] = useState<Skill[]>([]);
+	const [tools, setTools] = useState<ToolInfo[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [skillsLoading, setSkillsLoading] = useState(false);
+	const [toolsLoading, setToolsLoading] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
 
 	const refetch = useCallback(async () => {
@@ -41,12 +43,30 @@ export function useWorkspace(agentId: string | null, sessionId: string | null) {
 		}
 	}, [agentId, sessionId]);
 
+	const refetchTools = useCallback(async () => {
+		if (!agentId || !sessionId) {
+			setTools([]);
+			return;
+		}
+		setToolsLoading(true);
+		try {
+			setTools(await workspaceApi.tools.list(agentId, sessionId));
+		} catch (e) {
+			setError(e as Error);
+		} finally {
+			setToolsLoading(false);
+		}
+	}, [agentId, sessionId]);
+
 	useEffect(() => {
 		refetch();
 	}, [refetch]);
 	useEffect(() => {
 		refetchSkills();
 	}, [refetchSkills]);
+	useEffect(() => {
+		refetchTools();
+	}, [refetchTools]);
 
 	const addMcps = useCallback(
 		async (clients: MCPClient[]) => {
@@ -110,5 +130,7 @@ export function useWorkspace(agentId: string | null, sessionId: string | null) {
 		skillsLoading,
 		addSkill,
 		removeSkill,
+		tools,
+		toolsLoading,
 	};
 }

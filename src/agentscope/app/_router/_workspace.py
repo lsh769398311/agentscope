@@ -154,6 +154,31 @@ async def remove_mcp(
 
 
 # ---------------------------------------------------------------------------
+# Builtin tools endpoints
+# ---------------------------------------------------------------------------
+
+
+@workspace_router.get("/tools")
+async def list_tools(
+    agent_id: str = Query(...),
+    session_id: str = Query(...),
+    user_id: str = Depends(get_current_user_id),
+    storage: StorageBase = Depends(get_storage),
+    workspace_manager: WorkspaceManagerBase = Depends(get_workspace_manager),
+) -> list[ToolInfo]:
+    """Return the builtin tools available in the session's workspace."""
+    workspace = await _resolve_workspace(
+        user_id,
+        agent_id,
+        session_id,
+        storage,
+        workspace_manager,
+    )
+    tools = await workspace.list_tools()
+    return [ToolInfo(name=t.name, description=t.description) for t in tools]
+
+
+# ---------------------------------------------------------------------------
 # Skill endpoints
 # ---------------------------------------------------------------------------
 

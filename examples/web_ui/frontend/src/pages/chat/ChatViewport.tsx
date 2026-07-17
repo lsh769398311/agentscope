@@ -1,6 +1,6 @@
 import type { PermissionContext } from '@agentscope-ai/agentscope/permission';
 import type { TaskContext } from '@agentscope-ai/agentscope/state';
-import { BookText, ChevronDown, Database, ListTodo, PanelRight, ShieldCheck } from 'lucide-react';
+import { BookText, ChevronDown, Database, ListTodo, PanelRight, ShieldCheck, Wrench } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { ChatModelConfig, SessionKnowledgeConfig, TTSModelConfig } from '@/api';
@@ -15,6 +15,7 @@ import { PanelDock, type PanelDescriptor, type PanelKey } from '@/components/pan
 import { PermissionPanel } from '@/components/panel/PermissionPanel';
 import { SkillPanel } from '@/components/panel/SkillPanel';
 import { TaskPanel } from '@/components/panel/TaskPanel';
+import { ToolsPanel } from '@/components/panel/ToolsPanel';
 import { KnowledgeBaseParametersPopover } from '@/components/popover/KnowledgeBaseParametersPopover';
 import { ModelParametersPopover } from '@/components/popover/ModelParametersPopover';
 import { LlmSelect } from '@/components/select/LlmSelect';
@@ -170,6 +171,8 @@ export function ChatViewport({ agentId, sessionId, onTeamUpdated }: ChatViewport
 		skillsLoading,
 		addSkill,
 		removeSkill,
+		tools,
+		toolsLoading,
 	} = useWorkspace(agentId, sessionId);
 	const { knowledgeBases, loading: knowledgeBasesLoading } = useKnowledgeBases();
 	const { schema: kbMiddlewareSchema } = useKnowledgeBaseMiddlewareSchema();
@@ -292,6 +295,11 @@ export function ChatViewport({ agentId, sessionId, onTeamUpdated }: ChatViewport
 						disabled={!sessionId}
 					/>
 				),
+			},
+			tools: {
+				title: t('panel.tools.title'),
+				icon: <Wrench className="size-4" />,
+				content: <ToolsPanel tools={tools} loading={toolsLoading} />,
 			},
 		}),
 		[
@@ -606,6 +614,14 @@ export function ChatViewport({ agentId, sessionId, onTeamUpdated }: ChatViewport
 											>
 												<Database />
 												{t('panel.knowledge.title')}
+											</DropdownMenuCheckboxItem>
+											<DropdownMenuCheckboxItem
+												checked={isPanelOpen('tools')}
+												onCheckedChange={() => togglePanel('tools')}
+												onSelect={(e) => e.preventDefault()}
+											>
+												<Wrench />
+												{t('panel.tools.title')}
 											</DropdownMenuCheckboxItem>
 										</DropdownMenuContent>
 									</DropdownMenu>
